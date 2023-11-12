@@ -1,0 +1,84 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Course {
+private:
+    string courseName;
+    int capacity;
+    string* students;
+    int studentCount;
+
+public:
+    Course(const string& name, int cap) {
+        courseName = name;
+        capacity = cap;
+        students = new string[cap];
+        studentCount = 0;
+    }
+    Course(const Course& other) {
+        courseName = other.courseName;
+        capacity = other.capacity;
+        students = new string[capacity];
+        studentCount = other.studentCount;
+
+        for (int i = 0; i < studentCount; ++i) {
+            students[i] = other.students[i];
+        }
+    }
+    ~Course() {
+        delete[] students;
+    }
+    void addStudent(const string& student) {
+        if (studentCount < capacity) {
+            students[studentCount++] = student;
+        } else {
+            cout << "Course is at full capacity. Cannot add more students." << endl;
+        }
+    }
+
+   
+    void dropStudent(const string& student) {
+        int index = findStudent(student);
+        if (index != -1) 
+            for (int i = index; i < studentCount - 1; ++i) {
+                students[i] = students[i + 1];
+            }
+            --studentCount;
+            cout << "Student " << student << " dropped from the course." << endl;
+        } else {
+            cout << "Student " << student << " not found in the course." << endl;
+        }
+    }
+    int findStudent(const string& student) const {
+        for (int i = 0; i < studentCount; ++i) {
+            if (students[i] == student) {
+                return i;
+            }
+        }
+        return -1; 
+    }
+    const string* getStudents() const {
+        return students;
+    }
+    int getStudentCount() const {
+        return studentCount;
+    }
+};
+
+int main() {
+    Course course1("C++", 10);
+    Course course2(course1);
+
+    course1.addStudent("Ali");
+    course2.addStudent("Ahmed");
+
+    cout << "Students in course1: " << course1.getStudents()[0] << endl;
+    cout << "Students in course2: " << course2.getStudents()[0] << endl;
+    course1.dropStudent("Ali");
+
+    cout << "After dropping a student from course1: " << course1.getStudentCount() << " students" << endl;
+
+    return 0;
+}
